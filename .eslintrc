@@ -1,0 +1,29 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard",
+    "plugin:jsx-control-statements/recommended"
+  ],
+  "env": {
+    "browser": false
+  },
+  "plugins": [
+    "react",
+    "jsx-control-statements"
+  ],
+  "rules": {
+    "semi": [2, "never"],
+    "comma-dangle": [2, "always-multiline"],
+    "space-infix-ops": 0,
+    "max-len": [2, 1000, 2],
+    "indent": ["error", 2, { "MemberExpression": 0 }],
+    "space-before-function-paren": ["error", {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+    }],
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 2,
+    "padded-blocks": [2, {"classes": "always"}]
+  }
+}
