@@ -5,8 +5,8 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-static const char ssid[] = "Winternet";
-static const char password[] = "Candice1";
+static const char ssid[] = "Your SSID";
+static const char password[] = "Your PWD";
 static void writeLED(bool);
 static const char PROGMEM INDEX_HTML[] = R"rawliteral(
 <!DOCTYPE html>
