@@ -17,7 +17,7 @@ import {
 class Home extends Component {
 
   componentWillMount() {
-    this.props.initialize('ws://10.0.0.144:81')
+    this.props.initialize('ws://172.20.10.10:81')
   }
 
   sendMessage(message) {

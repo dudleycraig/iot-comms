@@ -5,8 +5,12 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 
-static const char ssid[] = "Your SSID";
-static const char password[] = "Your PWD";
+// static const char ssid[] = "Silvertree Holdings";
+// static const char password[] = "5mart5hopper";
+
+static const char ssid[] = "iPhone";
+static const char password[] = "4getsme!";
+
 static void writeLED(bool);
 static const char PROGMEM INDEX_HTML[] = R"rawliteral(
 <!DOCTYPE html>
@@ -22,8 +26,8 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       }
     </style>
     <script>
-      const websock;
-      const start = () => {
+      var websock;
+      var start = function() {
         websock = new WebSocket('ws://' + window.location.hostname + ':81/');
 
         websock.onopen = event => {
@@ -51,7 +55,7 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
         }
       }
 
-      const switch = element => {
+      var lightSwitch = element => {
         websock.send(element.id)
       }
     </script>
@@ -64,75 +68,91 @@ static const char PROGMEM INDEX_HTML[] = R"rawliteral(
       <b>LED</b>
     </div>
 
-    <button id="ledon" type="button" onclick="switch(this)">On</button> 
-    <button id="ledoff" type="button" onclick="switch(this)">Off</button>
+    <button id="ledon" type="button" onclick="lightSwitch(this)">On</button> 
+    <button id="ledoff" type="button" onclick="lightSwitch(this)">Off</button>
+
   </body>
 </html>
 )rawliteral";
 
 const int LEDPIN = 0; // Pin "D3" on nodemcu.
-
 bool LEDStatus; // LED status
-const char LEDON[] = "ledon"; // request
-const char LEDOFF[] = "ledoff"; // request 
+const char LEDON[] = "ledon"; // request text
+const char LEDOFF[] = "ledoff"; // request text
 
 MDNSResponder mdns;
 
 ESP8266WiFiMulti WiFiMulti;
 
-ESP8266WebServer server(80);
+ESP8266WebServer server(80); // webserver to connect to socket
 
-WebSocketsServer webSocket = WebSocketsServer(81);
+WebSocketsServer webSocket = WebSocketsServer(81); // socket server
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   Serial.printf("webSocketEvent(%d, %d, ...)\r\n", num, type);
 
   switch(type) {
-    case WStype_DISCONNECTED:
+
+    // disconnected from client
+    case WStype_DISCONNECTED: 
       Serial.printf("[%u] Disconnected!\r\n", num);
       break;
 
-    case WStype_CONNECTED:
+    // connected to client 
+    case WStype_CONNECTED: 
       {
         IPAddress ip = webSocket.remoteIP(num);
-        Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\r\n", num, ip[0], ip[1], ip[2], ip[3], payload);
+        Serial.printf("[%u] connected from %d.%d.%d.%d url: %s\r\n", num, ip[0], ip[1], ip[2], ip[3], payload);
         webSocket.sendTXT(num, LEDON, strlen(LEDStatus ? LEDON : LEDOFF));
       }
       break;
 
-    case WStype_TEXT:
-      Serial.printf("[%u] get Text: %s\r\n", num, payload);
+    // got text
+    case WStype_TEXT:  
+      Serial.printf("[%u] got text: %s\r\n", num, payload);
       if (strcmp(LEDON, (const char *)payload) == 0) {
-        writeLED(true);
+        writeLED(true); // switch led on
       }
       else if (strcmp(LEDOFF, (const char *)payload) == 0) {
-        writeLED(false);
+        writeLED(false); // switch led off
       }
       else {
-        Serial.println("Unknown command");
+        Serial.println("unknown command");
       }
-      webSocket.broadcastTXT(payload, length); // send data to all connected clients
+      webSocket.broadcastTXT(payload, length); // send text, state to all connected clients
       break;
 
-    case WStype_BIN:
-      Serial.printf("[%u] get binary length: %u\r\n", num, length);
+    // got binary
+    case WStype_BIN:  
+      Serial.printf("[%u] got binary length: %u\r\n", num, length);
       hexdump(payload, length);
+      webSocket.sendBIN(num, payload, length); // send binary
+      break;
 
-      // echo data back to browser
-      webSocket.sendBIN(num, payload, length);
+    // handle error
+    case WStype_ERROR: 
+      Serial.printf("[%u] error: %s\r\n", num, payload);
+      break;
+
+    // handle packets
+    case WStype_FRAGMENT_TEXT_START: 
+    case WStype_FRAGMENT_BIN_START:
+    case WStype_FRAGMENT:
+    case WStype_FRAGMENT_FIN:
+      Serial.printf("[%u] fragment: %s\r\n", num, payload);
       break;
 
     default:
-      Serial.printf("Invalid WStype [%d]\r\n", type);
+      Serial.printf("invalid event [%d]\r\n", type);
       break;
   }
 }
 
-void handleRoot() {
+void handleRoot() { // serve root web page
   server.send_P(200, "text/html", INDEX_HTML);
 }
 
-void handleNotFound() {
+void handleNotFound() { // serve 404
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -173,6 +193,8 @@ void setup()
     delay(1000);
   }
 
+  // WiFi.mode(WIFI_STA); // reset wifi mode for acquiring new ip address in station mode
+  WiFi.mode(WIFI_AP); // reset wifi mode for acquiring new ip address in access point mode
   WiFiMulti.addAP(ssid, password);
 
   while(WiFiMulti.run() != WL_CONNECTED) {
