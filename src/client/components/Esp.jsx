@@ -1,15 +1,11 @@
-/** components/Socket.js **/
+/** components/Esp.js */
 
-import React from 'react';
+import React from 'react'
 import styled, { css } from 'styled-components'
 
-const Socket = props => {
-  const {
-    status,
-    message,
-  } = props
-
-  const statusColor = (status) => {
+const Esp = (props) => {
+  const { status, message } = props 
+  const statusColor = () => {
     const colors = {
       RED: '#ff0000',
       ORANGE: '#ffac00',
@@ -18,16 +14,26 @@ const Socket = props => {
     }
 
     switch (status) {
-      case ('error'): return colors.RED
-      case ('connecting'): return colors.ORANGE
-      case ('connected'): return colors.GREEN
-      case ('disconnecting'): return colors.ORANGE
-      case ('disconnected'): return colors.GREEN
-      case ('processing-message'): return colors.ORANGE
-      case ('processed-message'): return colors.GREEN
-      case ('response'): return colors.GREEN
-      case ('responding'): return colors.ORANGE
-      default: return null
+      case 'error':
+        return colors.RED
+      case 'connecting':
+        return colors.ORANGE
+      case 'connected':
+        return colors.GREEN
+      case 'disconnecting':
+        return colors.ORANGE
+      case 'disconnected':
+        return colors.GREEN
+      case 'processing-message':
+        return colors.ORANGE
+      case 'processed-message':
+        return colors.GREEN
+      case 'response':
+        return colors.GREEN
+      case 'responding':
+        return colors.ORANGE
+      default:
+        return null
     }
   }
 
@@ -68,4 +74,4 @@ const Socket = props => {
   )
 }
 
-export default Socket
+export default Esp

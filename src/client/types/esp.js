@@ -1,6 +1,6 @@
-/** types/socket **/
+/** types/esp */
 
-export const types = {
+const esp = {
   CONNECT: 'CONNECT',
   DISCONNECT: 'DISCONNECT',
   SEND_MESSAGE: 'SEND_MESSAGE',
@@ -8,3 +8,5 @@ export const types = {
   HANDLE_ERROR: 'HANDLE_ERROR',
   SET_STATUS: 'SET_STATUS',
 }
+
+export default esp

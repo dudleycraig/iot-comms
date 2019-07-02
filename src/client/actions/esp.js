@@ -1,31 +1,31 @@
-/** actions/socket **/
+/** actions/esp */
 
-import { types } from 'types/socket'
+import espTypes from 'types/esp'
 
-export const connect = socket => ({
-  type: types.CONNECT,
+export const connect = (socket) => ({
+  type: espTypes.CONNECT,
   socket,
 })
 
 export const disconnect = () => ({
-  type: types.DISCONNECT,
+  type: espTypes.DISCONNECT,
 })
 
 export const sendMessage = () => ({
-  type: types.SEND_MESSAGE,
+  type: espTypes.SEND_MESSAGE,
 })
 
 export const handleMessage = () => ({
-  type: types.SEND_MESSAGE,
+  type: espTypes.SEND_MESSAGE,
 })
 
 export const handleError = (error = null) => ({
-  type: types.HANDLE_ERROR,
+  type: espTypes.HANDLE_ERROR,
   error,
 })
 
-export const setStatus = status => ({
-  type: types.SET_STATUS,
+export const setStatus = (status) => ({
+  type: espTypes.SET_STATUS,
   status,
 })
 
