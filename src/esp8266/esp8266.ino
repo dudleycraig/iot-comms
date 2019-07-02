@@ -7,7 +7,7 @@
 #include <ArduinoJson.h>
 
 static const char ssid[] = "Silvertree Holdings";
-static const char password[] = "5mart5hopper";
+static const char password[] = "***********";
 
 // static const char ssid[] = "iPhone";
 // static const char password[] = "4getsme!";
